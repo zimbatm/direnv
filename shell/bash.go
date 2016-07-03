@@ -1,12 +1,16 @@
-package main
+package shell
 
 import "fmt"
 
-type bash int
+type bash struct{}
 
-var BASH bash
+// Bash implements Export and Hook for the Bourne-Again shell
+//
+// https://www.gnu.org/software/bash/
+var Bash bash
 
-const BASH_HOOK = `
+// BashHook is the script that will be installed in bash
+const BashHook = `
 _direnv_hook() {
   local previous_exit_status=$?;
   eval "$(direnv export bash)";
@@ -17,11 +21,15 @@ if ! [[ "$PROMPT_COMMAND" =~ _direnv_hook ]]; then
 fi
 `
 
-func (b bash) Hook() (string, error) {
-	return BASH_HOOK, nil
+func (b bash) Name() string {
+	return "bash"
 }
 
-func (b bash) Export(e ShellExport) (out string) {
+func (b bash) Hook() (string, error) {
+	return BashHook, nil
+}
+
+func (b bash) Export(e Export) (out string) {
 	for key, value := range e {
 		if value == nil {
 			out += b.unset(key)
@@ -70,7 +78,9 @@ const (
 	DEL           = 127
 )
 
-// https://github.com/solidsnack/shell-escape/blob/master/Text/ShellEscape/Bash.hs
+// BashEscape implements a string escaping function for bash.
+//
+// See https://github.com/solidsnack/shell-escape/blob/master/Text/ShellEscape/Bash.hs
 /*
 A Bash escaped string. The strings are wrapped in @$\'...\'@ if any
 bytes within them must be escaped; otherwise, they are left as is.
@@ -154,7 +164,7 @@ func BashEscape(str string) string {
 		default:
 			hex(char)
 		}
-		i += 1
+		i++
 	}
 
 	if escape {

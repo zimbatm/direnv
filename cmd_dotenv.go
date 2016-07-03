@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/direnv/direnv/shell"
 	"io/ioutil"
 	"regexp"
 	"strings"
@@ -46,13 +47,13 @@ var CmdDotEnv = &Cmd{
 	Args:    []string{"[SHELL]", "[PATH_TO_DOTENV]"},
 	Private: true,
 	Fn: func(env Env, args []string) (err error) {
-		var shell Shell
+		var sh shell.Shell
 		var target string
 
 		if len(args) > 1 {
-			shell = DetectShell(args[1])
+			sh = shell.Detect(args[1])
 		} else {
-			shell = BASH
+			sh = shell.Bash
 		}
 
 		if len(args) > 2 {
@@ -69,7 +70,7 @@ var CmdDotEnv = &Cmd{
 		}
 
 		env = ParseDotEnv(string(data))
-		str := env.ToShell(shell)
+		str := env.ToShell(sh)
 		fmt.Println(str)
 
 		return

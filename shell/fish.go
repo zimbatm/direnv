@@ -1,25 +1,33 @@
-package main
+package shell
 
 import (
 	"fmt"
 	"strings"
 )
 
-type fish int
+type fish struct{}
 
-var FISH fish
+// Fish implements Export and Hook for the fish shell
+//
+// https://fishshell.com/
+var Fish fish
 
-const FISH_HOOK = `
+// FishHook is the script that will be installed in fish
+const FishHook = `
 function __direnv_export_eval --on-event fish_prompt;
 	eval (direnv export fish);
 end
 `
 
-func (f fish) Hook() (string, error) {
-	return FISH_HOOK, nil
+func (f fish) Name() string {
+	return "fish"
 }
 
-func (f fish) Export(e ShellExport) (out string) {
+func (f fish) Hook() (string, error) {
+	return FishHook, nil
+}
+
+func (f fish) Export(e Export) (out string) {
 	for key, value := range e {
 		if value == nil {
 			out += f.unset(key)
@@ -89,7 +97,7 @@ func (f fish) escape(str string) string {
 		default:
 			hex(char)
 		}
-		i += 1
+		i++
 	}
 
 	out += "'"

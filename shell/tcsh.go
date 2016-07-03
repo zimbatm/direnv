@@ -1,19 +1,29 @@
-package main
+package shell
 
 import (
 	"fmt"
 	"strings"
 )
 
-type tcsh int
+type tcsh struct{}
 
-var TCSH tcsh
+// Tcsh implements Export and Hook for tcsh
+//
+// https://en.wikipedia.org/wiki/Tcsh
+var Tcsh tcsh
 
-func (f tcsh) Hook() (string, error) {
-	return "alias precmd 'eval `direnv export tcsh`' ", nil
+// TcshHook is the script that will be installed in tcsh
+const TcshHook = "alias precmd 'eval `direnv export tcsh`' "
+
+func (f tcsh) Name() string {
+	return "tcsh"
 }
 
-func (f tcsh) Export(e ShellExport) (out string) {
+func (f tcsh) Hook() (string, error) {
+	return TcshHook, nil
+}
+
+func (f tcsh) Export(e Export) (out string) {
 	for key, value := range e {
 		if value == nil {
 			out += f.unset(key)
@@ -112,7 +122,7 @@ func (f tcsh) escape(str string) string {
 		default:
 			hex(char)
 		}
-		i += 1
+		i++
 	}
 
 	return out

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/direnv/direnv/shell"
 	"strings"
 )
 
@@ -70,8 +71,8 @@ func (self *EnvDiff) Any() bool {
 	return len(self.Prev) > 0 || len(self.Next) > 0
 }
 
-func (self *EnvDiff) ToShell(shell Shell) string {
-	e := make(ShellExport)
+func (self *EnvDiff) ToShell(sh shell.Shell) string {
+	e := make(shell.Export)
 
 	for key := range self.Prev {
 		_, ok := self.Next[key]
@@ -84,7 +85,7 @@ func (self *EnvDiff) ToShell(shell Shell) string {
 		e.Add(key, value)
 	}
 
-	return shell.Export(e)
+	return sh.Export(e)
 }
 
 func (self *EnvDiff) Patch(env Env) (newEnv Env) {

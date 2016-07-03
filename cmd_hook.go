@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/direnv/direnv/shell"
 )
 
 // `direnv hook $0`
@@ -16,12 +17,12 @@ var CmdHook = &Cmd{
 			target = args[1]
 		}
 
-		shell := DetectShell(target)
-		if shell == nil {
+		sh := shell.Detect(target)
+		if sh == nil {
 			return fmt.Errorf("Unknown target shell '%s'", target)
 		}
 
-		h, err := shell.Hook()
+		h, err := sh.Hook()
 		if err != nil {
 			return err
 		}

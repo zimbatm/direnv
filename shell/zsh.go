@@ -1,11 +1,14 @@
-package main
+package shell
 
-// ZSH is a singleton instance of ZSH_T
-type zsh int
+type zsh struct{}
 
-var ZSH zsh
+// Zsh implements Export and Hook for the Z shell
+//
+// http://www.zsh.org/
+var Zsh zsh
 
-const ZSH_HOOK = `
+// ZshHook is the script that will be installed in zsh
+const ZshHook = `
 _direnv_hook() {
   eval "$(direnv export zsh)";
 }
@@ -15,11 +18,15 @@ if [[ -z ${precmd_functions[(r)_direnv_hook]} ]]; then
 fi
 `
 
-func (z zsh) Hook() (string, error) {
-	return ZSH_HOOK, nil
+func (z zsh) Name() string {
+	return "zsh"
 }
 
-func (z zsh) Export(e ShellExport) (out string) {
+func (z zsh) Hook() (string, error) {
+	return ZshHook, nil
+}
+
+func (z zsh) Export(e Export) (out string) {
 	for key, value := range e {
 		if value == nil {
 			out += z.unset(key)

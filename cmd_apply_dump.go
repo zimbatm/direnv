@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/direnv/direnv/shell"
 	"io/ioutil"
 )
 
@@ -33,7 +34,7 @@ var CmdApplyDump = &Cmd{
 
 		diff := env.Diff(dumpedEnv)
 
-		exports := diff.ToShell(BASH)
+		exports := diff.ToShell(shell.Bash)
 
 		_, err = fmt.Println(exports)
 		if err != nil {

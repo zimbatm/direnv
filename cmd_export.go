@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/direnv/direnv/shell"
 	"log"
 	"sort"
 	"strings"
@@ -93,7 +94,7 @@ func cleanEnv(env Env) {
 	env.CleanContext()
 }
 
-func (self *ExportContext) diffString(shell Shell) string {
+func (self *ExportContext) diffString(sh shell.Shell) string {
 	oldDiff := self.oldEnv.Diff(self.newEnv)
 	if oldDiff.Any() {
 		var out []string
@@ -123,7 +124,7 @@ func (self *ExportContext) diffString(shell Shell) string {
 	}
 
 	diff := self.env.Diff(self.newEnv)
-	return diff.ToShell(shell)
+	return diff.ToShell(sh)
 }
 
 func exportCommand(env Env, args []string) (err error) {
@@ -138,7 +139,7 @@ func exportCommand(env Env, args []string) (err error) {
 		target = args[1]
 	}
 
-	shell := DetectShell(target)
+	shell := shell.Detect(target)
 	if shell == nil {
 		return fmt.Errorf("Unknown target shell '%s'", target)
 	}

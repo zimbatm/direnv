@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/direnv/direnv/shell"
+)
 
 var CmdWatch = &Cmd{
 	Name:    "watch",
@@ -24,9 +27,9 @@ func watchCommand(env Env, args []string) (err error) {
 		shellName = "bash"
 	}
 
-	shell := DetectShell(shellName)
+	sh := shell.Detect(shellName)
 
-	if shell == nil {
+	if sh == nil {
 		return fmt.Errorf("Unknown target shell '%s'", shellName)
 	}
 
@@ -40,10 +43,10 @@ func watchCommand(env Env, args []string) (err error) {
 
 	watches.Update(path)
 
-	e := make(ShellExport)
+	e := make(shell.Export)
 	e.Add(DIRENV_WATCHES, watches.Marshal())
 
-	fmt.Printf(shell.Export(e))
+	fmt.Printf(sh.Export(e))
 
 	return
 }

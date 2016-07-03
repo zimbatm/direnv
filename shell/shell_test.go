@@ -1,4 +1,4 @@
-package main
+package shell
 
 import (
 	"testing"
@@ -13,12 +13,12 @@ func TestBashEscape(t *testing.T) {
 }
 
 func TestShellDetection(t *testing.T) {
-	assertNotNil(t, DetectShell("-bash"))
-	assertNotNil(t, DetectShell("-/bin/bash"))
-	assertNotNil(t, DetectShell("-/usr/local/bin/bash"))
-	assertNotNil(t, DetectShell("-zsh"))
-	assertNotNil(t, DetectShell("-/bin/zsh"))
-	assertNotNil(t, DetectShell("-/usr/local/bin/zsh"))
+	assertNotNil(t, Detect("-bash"))
+	assertNotNil(t, Detect("-/bin/bash"))
+	assertNotNil(t, Detect("-/usr/local/bin/bash"))
+	assertNotNil(t, Detect("-zsh"))
+	assertNotNil(t, Detect("-/bin/zsh"))
+	assertNotNil(t, Detect("-/usr/local/bin/zsh"))
 }
 
 func assertNotNil(t *testing.T, a Shell) {
