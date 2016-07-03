@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/direnv/direnv/shell"
 	"os"
 	"strings"
 )
@@ -57,14 +58,14 @@ func (env Env) ToGoEnv() []string {
 	return goEnv
 }
 
-func (env Env) ToShell(shell Shell) string {
-	e := make(ShellExport)
+func (env Env) ToShell(sh shell.Shell) string {
+	e := make(shell.Export)
 
 	for key, value := range env {
 		e.Add(key, value)
 	}
 
-	return shell.Export(e)
+	return sh.Export(e)
 }
 
 func (env Env) Serialize() string {

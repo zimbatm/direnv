@@ -1,19 +1,26 @@
-package main
+package shell
 
 import (
 	"errors"
 	"strings"
 )
 
-type vim int
+type vim struct{}
 
-var VIM vim
+// Vim implements Export for the vim editor
+//
+// http://www.vim.org/
+var Vim vim
 
-func (x vim) Hook() (string, error) {
-	return "", errors.New("this feature is not supported. Install the direnv.vim plugin instead.")
+func (x vim) Name() string {
+	return "vim"
 }
 
-func (x vim) Export(e ShellExport) (out string) {
+func (x vim) Hook() (string, error) {
+	return "", errors.New("this feature is not supported. Install the direnv.vim plugin instead")
+}
+
+func (x vim) Export(e Export) (out string) {
 	for key, value := range e {
 		if value == nil {
 			out += x.unset(key)
