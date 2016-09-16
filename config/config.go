@@ -22,7 +22,7 @@ func LoadConfig(env Env) (config *Config, err error) {
 		Env: env,
 	}
 
-	config.ConfDir = env[DIRENV_CONFIG]
+	config.ConfDir = env[CONFIG_DIR]
 	if config.ConfDir == "" {
 		config.ConfDir = XdgConfigDir(env, "direnv")
 	}
