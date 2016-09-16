@@ -6,10 +6,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	e "github.com/direnv/direnv/env"
 )
 
 type Config struct {
-	Env      Env
+	Env      e.Env
 	WorkDir  string // Current directory
 	ConfDir  string
 	SelfPath string

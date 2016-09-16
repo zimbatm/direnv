@@ -2,19 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/direnv/direnv/shell"
 	"log"
 	"sort"
 	"strings"
+
+	e "github.com/direnv/direnv/env"
+	"github.com/direnv/direnv/shell"
 )
 
 type ExportContext struct {
 	config   *Config
 	foundRC  *RC
 	loadedRC *RC
-	env      Env
-	oldEnv   Env
-	newEnv   Env
+	env      e.Env
+	oldEnv   e.Env
+	newEnv   e.Env
 }
 
 func (self *ExportContext) loadConfig() (err error) {

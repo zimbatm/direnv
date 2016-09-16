@@ -1,16 +1,16 @@
-package main
+package env
 
 import (
 	"reflect"
 	"testing"
 )
 
-func TestEnvDiff(t *testing.T) {
-	diff := &EnvDiff{map[string]string{"FOO": "bar"}, map[string]string{"BAR": "baz"}}
+func TestDiff(t *testing.T) {
+	diff := &Diff{map[string]string{"FOO": "bar"}, map[string]string{"BAR": "baz"}}
 
 	out := diff.Serialize()
 
-	diff2, err := LoadEnvDiff(out)
+	diff2, err := LoadDiff(out)
 	if err != nil {
 		t.Error("parse error", err)
 	}
@@ -26,11 +26,11 @@ func TestEnvDiff(t *testing.T) {
 
 // Issue #114
 // Check that empty environment variables correctly appear in the diff
-func TestEnvDiffEmptyValue(t *testing.T) {
+func TestDiffEmptyValue(t *testing.T) {
 	before := Env{}
 	after := Env{"FOO": ""}
 
-	diff := BuildEnvDiff(before, after)
+	diff := BuildDiff(before, after)
 
 	if !reflect.DeepEqual(diff.Next, map[string]string(after)) {
 		t.Errorf("diff.Next != after (%#+v != %#+v)", diff.Next, after)
@@ -38,19 +38,19 @@ func TestEnvDiffEmptyValue(t *testing.T) {
 }
 
 func TestIgnoredEnv(t *testing.T) {
-	if !IgnoredEnv(DIRENV_BASH) {
+	if !ignoredEnv(DIRENV_BASH) {
 		t.Fail()
 	}
-	if IgnoredEnv(DIRENV_DIFF) {
+	if ignoredEnv(DIRENV_DIFF) {
 		t.Fail()
 	}
-	if !IgnoredEnv("_") {
+	if !ignoredEnv("_") {
 		t.Fail()
 	}
-	if !IgnoredEnv("__fish_foo") {
+	if !ignoredEnv("__fish_foo") {
 		t.Fail()
 	}
-	if !IgnoredEnv("__fishx") {
+	if !ignoredEnv("__fishx") {
 		t.Fail()
 	}
 }

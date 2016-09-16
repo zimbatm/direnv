@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+
+	e "github.com/direnv/direnv/env"
 )
 
 var CmdCurrent = &Cmd{
@@ -12,7 +14,7 @@ var CmdCurrent = &Cmd{
 	Fn:      currentCommandFn,
 }
 
-func currentCommandFn(env Env, args []string) (err error) {
+func currentCommandFn(env e.Env, args []string) (err error) {
 	if len(args) < 2 {
 		err = errors.New("Missing PATH argument")
 		return

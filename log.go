@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+
+	e "github.com/direnv/direnv/env"
 )
 
 const (
@@ -13,7 +15,7 @@ const (
 
 var debugging bool
 
-func setupLogging(env Env) {
+func setupLogging(env e.Env) {
 	log.SetFlags(0)
 	log.SetPrefix("")
 	if val, ok := env[DIRENV_DEBUG]; ok == true && val == "1" {
@@ -27,7 +29,7 @@ func log_error(msg string, a ...interface{}) {
 	logMsg(errorLogFormat, msg, a...)
 }
 
-func log_status(env Env, msg string, a ...interface{}) {
+func log_status(env e.Env, msg string, a ...interface{}) {
 	format, ok := env["DIRENV_LOG_FORMAT"]
 	if !ok {
 		format = defaultLogFormat

@@ -2,18 +2,20 @@ package main
 
 import (
 	"fmt"
-	"github.com/direnv/direnv/shell"
 	"io/ioutil"
 	"regexp"
 	"strings"
+
+	e "github.com/direnv/direnv/env"
+	"github.com/direnv/direnv/shell"
 )
 
 var DOTENV_REG = regexp.MustCompile("(?:export\\s+)?([\\w\\.]+)(?:\\s*=\\s*|:\\s+?)(.*)")
 var DOTENV_LF_REG = regexp.MustCompile("\\\\n")
 var DOTENV_ESC_REG = regexp.MustCompile("\\\\.")
 
-func ParseDotEnv(data string) Env {
-	var dotenv = make(Env)
+func ParseDotEnv(data string) e.Env {
+	var dotenv = make(e.Env)
 
 	result := DOTENV_REG.FindAllStringSubmatch(data, -1)
 	for _, match := range result {

@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	e "github.com/direnv/direnv/env"
 )
 
 type RC struct {
@@ -92,7 +94,7 @@ func (self *RC) Touch() error {
 
 const NOT_ALLOWED = "%s is blocked. Run `direnv allow` to approve its content."
 
-func (self *RC) Load(config *Config, env Env) (newEnv Env, err error) {
+func (self *RC) Load(config *Config, env e.Env) (newEnv e.Env, err error) {
 	wd := config.WorkDir
 	direnv := config.SelfPath
 	shellEnv := env.Copy()
@@ -108,7 +110,7 @@ func (self *RC) Load(config *Config, env Env) (newEnv Env, err error) {
 
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
-	cmd.Env = shellEnv.ToGoEnv()
+	cmd.Env = e.ToEnviron(shellEnv)
 	cmd.Dir = wd
 
 	out, err := cmd.Output()
@@ -126,7 +128,7 @@ func (self *RC) Load(config *Config, env Env) (newEnv Env, err error) {
 	return
 }
 
-func (self *RC) RecordState(env Env, newEnv Env) {
+func (self *RC) RecordState(env e.Env, newEnv e.Env) {
 	newEnv[DIRENV_DIR] = "-" + filepath.Dir(self.path)
 	newEnv[DIRENV_DIFF] = env.Diff(newEnv).Serialize()
 }

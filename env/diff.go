@@ -1,4 +1,4 @@
-package main
+package env
 
 import (
 	"github.com/direnv/direnv/shell"
@@ -6,7 +6,7 @@ import (
 )
 
 // A list of keys we don't want to deal with
-var IGNORED_KEYS = map[string]bool{
+var IgnoredKeys = map[string]bool{
 	// direnv env config
 	"DIRENV_CONFIG": true,
 	"DIRENV_BASH":   true,
@@ -23,17 +23,17 @@ var IGNORED_KEYS = map[string]bool{
 	"_":         true,
 }
 
-type EnvDiff struct {
+type Diff struct {
 	Prev map[string]string `json:"p"`
 	Next map[string]string `json:"n"`
 }
 
-func NewEnvDiff() *EnvDiff {
-	return &EnvDiff{make(map[string]string), make(map[string]string)}
+func NewDiff() *Diff {
+	return &Diff{make(map[string]string), make(map[string]string)}
 }
 
-func BuildEnvDiff(e1, e2 Env) *EnvDiff {
-	diff := NewEnvDiff()
+func BuildDiff(e1, e2 Env) *Diff {
+	diff := NewDiff()
 
 	in := func(key string, e Env) bool {
 		_, ok := e[key]
@@ -41,7 +41,7 @@ func BuildEnvDiff(e1, e2 Env) *EnvDiff {
 	}
 
 	for key := range e1 {
-		if IgnoredEnv(key) {
+		if ignoredEnv(key) {
 			continue
 		}
 		if e2[key] != e1[key] || !in(key, e2) {
@@ -50,7 +50,7 @@ func BuildEnvDiff(e1, e2 Env) *EnvDiff {
 	}
 
 	for key := range e2 {
-		if IgnoredEnv(key) {
+		if ignoredEnv(key) {
 			continue
 		}
 		if e2[key] != e1[key] || !in(key, e1) {
@@ -61,17 +61,17 @@ func BuildEnvDiff(e1, e2 Env) *EnvDiff {
 	return diff
 }
 
-func LoadEnvDiff(base64env string) (diff *EnvDiff, err error) {
-	diff = new(EnvDiff)
+func LoadDiff(base64env string) (diff *Diff, err error) {
+	diff = new(Diff)
 	err = unmarshal(base64env, diff)
 	return
 }
 
-func (self *EnvDiff) Any() bool {
+func (self *Diff) Any() bool {
 	return len(self.Prev) > 0 || len(self.Next) > 0
 }
 
-func (self *EnvDiff) ToShell(sh shell.Shell) string {
+func (self *Diff) ToShell(sh shell.Shell) string {
 	e := make(shell.Export)
 
 	for key := range self.Prev {
@@ -88,7 +88,7 @@ func (self *EnvDiff) ToShell(sh shell.Shell) string {
 	return sh.Export(e)
 }
 
-func (self *EnvDiff) Patch(env Env) (newEnv Env) {
+func (self *Diff) Patch(env Env) (newEnv Env) {
 	newEnv = make(Env)
 
 	for k, v := range env {
@@ -106,23 +106,23 @@ func (self *EnvDiff) Patch(env Env) (newEnv Env) {
 	return newEnv
 }
 
-func (self *EnvDiff) Reverse() *EnvDiff {
-	return &EnvDiff{self.Next, self.Prev}
+func (self *Diff) Reverse() *Diff {
+	return &Diff{self.Next, self.Prev}
 }
 
-func (self *EnvDiff) Serialize() string {
+func (self *Diff) Serialize() string {
 	return marshal(self)
 }
 
 //// Utils
 
-func IgnoredEnv(key string) bool {
+func ignoredEnv(key string) bool {
 	if strings.HasPrefix(key, "__fish") {
 		return true
 	}
 	if strings.HasPrefix(key, "BASH_FUNC_") {
 		return true
 	}
-	_, found := IGNORED_KEYS[key]
+	_, found := IgnoredKeys[key]
 	return found
 }
