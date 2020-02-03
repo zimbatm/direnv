@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 type fish struct{}
@@ -56,8 +57,6 @@ func (sh fish) unset(key string) string {
 func (sh fish) escape(str string) string {
 	in := []byte(str)
 	out := "'"
-	i := 0
-	l := len(in)
 
 	hex := func(char byte) {
 		out += fmt.Sprintf("'\\x%02x'", char)
@@ -75,8 +74,8 @@ func (sh fish) escape(str string) string {
 		out += string([]byte{char})
 	}
 
-	for i < l {
-		char := in[i]
+	for _, char := range in {
+		DecodeRuneInString ¶
 		switch {
 		case char == TAB:
 			escaped(`\t`)
@@ -97,7 +96,6 @@ func (sh fish) escape(str string) string {
 		default:
 			hex(char)
 		}
-		i++
 	}
 
 	out += "'"
