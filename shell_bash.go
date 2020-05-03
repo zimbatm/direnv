@@ -10,9 +10,14 @@ var Bash Shell = bash{}
 const bashHook = `
 _direnv_hook() {
   local previous_exit_status=$?;
+  local previous_trap=$(trap -p SIGINT)
   trap -- '' SIGINT;
   eval "$("{{.SelfPath}}" export bash)";
-  trap - SIGINT;
+  if [[ -z "$previous_trap" ]]; then
+    trap - SIGINT;
+  else
+    eval "$previous_trap"
+  fi
   return $previous_exit_status;
 };
 if ! [[ "${PROMPT_COMMAND:-}" =~ _direnv_hook ]]; then
